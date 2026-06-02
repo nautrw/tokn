@@ -2,5 +2,5 @@ import pyotp
 
 
 def generate_totp(key):
-    totp = pyotp.totp(key)  # ty:ignore[call-non-callable]
+    totp = pyotp.TOTP(key)
     return totp.now()
