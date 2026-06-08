@@ -22,3 +22,14 @@ def encrypt_to_file(filename: str, text: str, salt: bytes, key: bytes) -> None:
     
     with open(filename, 'w') as f:
         f.write(f"{salt}\n{token}")
+
+def decrypt_from_file(filename: str, key: bytes):
+    fernet = Fernet(key)
+    
+    with open(filename, 'r') as f:
+        salt, encrypted = f.read().splitlines()
+        print(encrypted)
+        
+    # decrypted = fernet.decrypt(encrypted)
+    
+    # return salt, decrypted
