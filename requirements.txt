@@ -2,3 +2,4 @@ click
 pyotp
 pytest
 cryptography
+click-aliases
