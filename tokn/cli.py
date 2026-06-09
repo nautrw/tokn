@@ -1,4 +1,5 @@
 import click
+from click_aliases import ClickAliasedGroup
 import tokn.otp as otp
 import pyotp
 import tokn.encryption as encryption
@@ -9,7 +10,7 @@ import os
 KEYS_FILE = "keys"
 
 
-@click.group()
+@click.group(cls=ClickAliasedGroup)
 @click.pass_context
 def cli(ctx):
     if not os.path.isfile(KEYS_FILE) and not ctx.invoked_subcommand == "init":
@@ -77,3 +78,24 @@ def init():
     encryption.encrypt_to_file(KEYS_FILE, "{}", random_salt, key)
 
     click.echo("Successfully created new keys file.")
+
+
+@cli.command(aliases=["passwd"])
+def change_password():
+    """Change the password of the encrypted file."""
+    current_password = click.prompt("Current password", hide_input=True).encode()
+
+    file = encryption.get_keys_with_password(KEYS_FILE, current_password)
+
+    new_password = click.prompt("New password", hide_input=True)
+    new_password_confirm = click.prompt("Enter it again", hide_input=True)
+
+    if new_password == new_password_confirm:
+        new_salt = os.urandom(16)
+        new_key = encryption.gen_password_key(new_password.encode(), new_salt)
+
+        encryption.encrypt_to_file(KEYS_FILE, json.dumps(file), new_salt, new_key)
+
+        click.echo("Successfully changed password.")
+    else:
+        exit("Passwords must be the same. Please try again.")
