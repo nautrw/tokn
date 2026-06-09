@@ -24,19 +24,17 @@ def encrypt_to_file(filename: str, text: str, salt: bytes, key: bytes) -> None:
         f.write(token)
 
 
-def get_salt_from_file(filename: str):
+def get_file_info(filename: str):
     with open(filename, "r") as f:
-        salt, _ = f.read().splitlines()
+        salt, encrypted = f.read().splitlines()
+    
+    salt = base64.b64decode(salt) 
 
-    return base64.b64decode(salt)
+    return salt, encrypted
 
-
-def decrypt_keys_from_file(filename: str, key: bytes):
+def decrypt(encrypted: bytes, key: bytes):
     fernet = Fernet(key)
-
-    with open(filename, "r") as f:
-        _, encrypted = f.read().splitlines()
-
+    
     decrypted = fernet.decrypt(encrypted)
-
+    
     return decrypted.decode()
