@@ -114,3 +114,18 @@ def change_password():
         click.echo("Successfully changed password.")
     else:
         exit("Passwords must be the same. Please try again.")
+
+
+@cli.command()
+def list():
+    """List all the services in the keys file."""
+    password = click.prompt("Password", hide_input=True).encode()
+
+    try:
+        keys = encryption.get_keys_with_password(KEYS_FILE, password)
+    except InvalidToken:
+        exit("Invalid password.")
+
+    click.echo("Available services:")
+    for service in keys.keys():
+        click.echo(service)
