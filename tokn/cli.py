@@ -126,9 +126,11 @@ def list():
     except InvalidToken:
         exit("Incorrect password.")
 
-    click.echo("Available services:")
-    for service in keys.keys():
-        click.echo(service)
+    if not (keys_names := keys.keys()):
+        click.echo("No services found.")
+    else:
+        for i, name in enumerate(keys_names):
+            click.echo(f"{i + 1}: {name}")
 
 
 @cli.command(aliases=["rm"])
