@@ -49,6 +49,8 @@ def get(name: str):
     
     totp = otp.generate_totp(secret_key)
     time_remaining = otp.get_time_remaining(secret_key)
+    next_code = otp.get_next_totp(secret_key)
 
     click.echo(f"Code: {totp}")
     click.echo(f"{floor(time_remaining)} seconds left")
+    click.echo(f"Next code: {next_code}")
