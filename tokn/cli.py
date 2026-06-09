@@ -25,8 +25,8 @@ def add(name: str):
 
     keys_dict[name] = secret_key
 
-    salt, encrypted = encryption.get_file_info("keys")
-    key = encryption.
+    salt = encryption.get_file_info("keys")[0]
+    key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file("keys", json.dumps(keys_dict), salt, key)
 
     click.echo(f"Successfully added key to {name}")
