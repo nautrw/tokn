@@ -149,7 +149,7 @@ def remove(name):
 
     del keys[name]
 
-    confirm_delete = click.confirm(
+    click.confirm(
         "Are you sure you want to delete this key? This action can not be reversed.",
         abort=True,
     )
