@@ -1,3 +1,4 @@
+from hashlib import new
 import click
 from click_aliases import ClickAliasedGroup
 from cryptography.fernet import InvalidToken
@@ -82,14 +83,14 @@ def init():
     if os.path.isfile(KEYS_FILE):
         exit("There is already an existing keys file.")
 
-    passwd_input1 = click.prompt("Create a new password", hide_input=True)
-    passwd_input2 = click.prompt("Confirm your password", hide_input=True)
+    new_password = click.prompt("Create a new password", hide_input=True)
+    password_confirm = click.prompt("Confirm your password", hide_input=True)
 
-    if not passwd_input1 == passwd_input2:
+    if not new_password == password_confirm:
         exit("Passwords must be the same. Please try again.")
 
     random_salt = os.urandom(16)
-    key = encryption.gen_password_key(passwd_input1.encode(), random_salt)
+    key = encryption.gen_password_key(new_password.encode(), random_salt)
 
     open(KEYS_FILE, "x")
     encryption.encrypt_to_file(KEYS_FILE, "{}", random_salt, key)
