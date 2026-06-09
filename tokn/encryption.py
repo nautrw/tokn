@@ -43,7 +43,7 @@ def decrypt(encrypted: bytes, key: bytes):
 
 
 def get_keys_with_password(filename: str, password: bytes):
-    salt, encrypted = get_file_info("keys")
+    salt, encrypted = get_file_info(filename)
     key = gen_password_key(password, salt)
     decrypted = decrypt(encrypted, key)
 
