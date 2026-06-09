@@ -3,6 +3,7 @@ import tokn.otp as otp
 import pyotp
 import tokn.encryption as encryption
 import json
+from math import floor
 
 @click.group()
 def cli():
@@ -47,5 +48,7 @@ def get(name: str):
     secret_key = keys_dict[name]
     
     totp = otp.generate_totp(secret_key)
+    time_remaining = otp.get_time_remaining(secret_key)
 
     click.echo(f"Code: {totp}")
+    click.echo(f"{floor(time_remaining)} seconds left")
