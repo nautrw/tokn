@@ -53,7 +53,14 @@ def get(name: str):
     NAME is the name of the service.
     """
     password = click.prompt("Enter your password", hide_input=True).encode()
-    keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
+
+    try:
+        keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
+    except InvalidToken:
+        exit("Incorrect password.")
+
+    if name not in keys_dict:
+        exit("Invalid service name.")
 
     secret_key = keys_dict[name]
 
