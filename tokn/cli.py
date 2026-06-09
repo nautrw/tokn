@@ -33,6 +33,9 @@ def add(name: str):
 
     secret_key = click.prompt("Enter the secret key", hide_input=True)
 
+    if name in keys_dict:
+        click.confirm("That service is already added. Override?", abort=True)
+
     keys_dict[name] = secret_key
 
     salt = encryption.get_file_info(KEYS_FILE)[0]
