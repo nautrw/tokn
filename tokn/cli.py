@@ -129,3 +129,31 @@ def list():
     click.echo("Available services:")
     for service in keys.keys():
         click.echo(service)
+
+
+@cli.command(aliases=["rm"])
+@click.argument("name", required=True)
+def remove(name):
+    """Remove a service NAME from the keys file."""
+    password = click.prompt("Password", hide_input=True).encode()
+
+    try:
+        keys = encryption.get_keys_with_password(KEYS_FILE, password)
+    except InvalidToken:
+        exit("Invalid password.")
+
+    if name not in keys:
+        exit("That service is not in your keys file.")
+
+    del keys[name]
+
+    confirm_delete = click.confirm(
+        "Are you sure you want to delete this key? This action can not be reversed.",
+        abort=True,
+    )
+
+    salt = encryption.get_file_info(KEYS_FILE)[0]
+    key = encryption.gen_password_key(password, salt)
+    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
+
+    click.echo(f"Successfully removed {name} from your keys.")
