@@ -7,8 +7,10 @@ import tokn.encryption as encryption
 import json
 from math import floor
 import os
+from platformdirs import PlatformDirs
 
-KEYS_FILE = "keys"
+dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
+KEYS_FILE = dirs.user_data_dir + "/keys"
 
 
 @click.group(cls=ClickAliasedGroup)
