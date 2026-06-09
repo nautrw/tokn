@@ -1,5 +1,6 @@
 import base64
 import os
+import json
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
@@ -27,14 +28,23 @@ def encrypt_to_file(filename: str, text: str, salt: bytes, key: bytes) -> None:
 def get_file_info(filename: str):
     with open(filename, "r") as f:
         salt, encrypted = f.read().splitlines()
-    
-    salt = base64.b64decode(salt) 
+
+    salt = base64.b64decode(salt)
 
     return salt, encrypted
 
+
 def decrypt(encrypted: bytes, key: bytes):
     fernet = Fernet(key)
-    
+
     decrypted = fernet.decrypt(encrypted)
-    
+
     return decrypted.decode()
+
+
+def get_keys_with_password(filename: str, password: bytes):
+    salt, encrypted = get_file_info("keys")
+    key = gen_password_key(password, salt)
+    decrypted = decrypt(encrypted, key)
+
+    return json.loads(decrypted)
