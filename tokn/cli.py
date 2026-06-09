@@ -25,7 +25,11 @@ def add(name: str):
     NAME is the name of the service.
     """
     password = click.prompt("Enter your password", hide_input=True).encode()
-    keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
+
+    try:
+        keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
+    except InvalidToken:
+        exit("Incorrect password.")
 
     secret_key = click.prompt("Enter the secret key", hide_input=True)
 
