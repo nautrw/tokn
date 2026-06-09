@@ -32,7 +32,7 @@ def add(name: str):
     except InvalidToken:
         exit("Incorrect password.")
 
-    secret_key = click.prompt("Enter the secret key", hide_input=True)
+    secret_key = click.prompt("Secret key", hide_input=True)
 
     if name in keys_dict:
         click.confirm("That service is already added. Override?", abort=True)
@@ -80,8 +80,8 @@ def init():
     if os.path.isfile(KEYS_FILE):
         exit("There is already an existing keys file.")
 
-    passwd_input1 = click.prompt("Please create a new password", hide_input=True)
-    passwd_input2 = click.prompt("Please enter the password again", hide_input=True)
+    passwd_input1 = click.prompt("Create a new password", hide_input=True)
+    passwd_input2 = click.prompt("Confirm your password", hide_input=True)
 
     if not passwd_input1 == passwd_input2:
         exit("Passwords must be the same. Please try again.")
@@ -102,8 +102,8 @@ def change_password():
 
     file = encryption.get_keys_with_password(KEYS_FILE, current_password)
 
-    new_password = click.prompt("New password", hide_input=True)
-    new_password_confirm = click.prompt("Enter it again", hide_input=True)
+    new_password = click.prompt("Create a new password", hide_input=True)
+    new_password_confirm = click.prompt("Confirm your password", hide_input=True)
 
     if new_password == new_password_confirm:
         new_salt = os.urandom(16)
@@ -119,12 +119,12 @@ def change_password():
 @cli.command()
 def list():
     """List all the services in the keys file."""
-    password = click.prompt("Password", hide_input=True).encode()
+    password = click.prompt("Enter your password", hide_input=True).encode()
 
     try:
         keys = encryption.get_keys_with_password(KEYS_FILE, password)
     except InvalidToken:
-        exit("Invalid password.")
+        exit("Incorrect password.")
 
     click.echo("Available services:")
     for service in keys.keys():
@@ -135,12 +135,12 @@ def list():
 @click.argument("name", required=True)
 def remove(name):
     """Remove a service NAME from the keys file."""
-    password = click.prompt("Password", hide_input=True).encode()
+    password = click.prompt("Enter your password", hide_input=True).encode()
 
     try:
         keys = encryption.get_keys_with_password(KEYS_FILE, password)
     except InvalidToken:
-        exit("Invalid password.")
+        exit("Incorrect password.")
 
     if name not in keys:
         exit("That service is not in your keys file.")
