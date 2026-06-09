@@ -1,5 +1,6 @@
 import click
 from click_aliases import ClickAliasedGroup
+from cryptography.fernet import InvalidToken
 import tokn.otp as otp
 import pyotp
 import tokn.encryption as encryption
