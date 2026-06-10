@@ -25,12 +25,13 @@ def cli(ctx):
 @cli.command()
 @click.argument("name", required=True)
 @click.option(
-    "--qr",
-    "qr",
+    "--code",
+    "code",
     type=str,
-    help="Scan a QR code from the image file to get the secret key.",
+    is_flag=True,
+    help="Use a raw Base32 secret key code.",
 )
-def add(name: str, qr):
+def add(name: str, code):
     """Associate a secret key to the service NAME.
 
     NAME is the name of the service.
@@ -42,7 +43,7 @@ def add(name: str, qr):
     except InvalidToken:
         raise click.ClickException("Incorrect password.")
 
-    if not qr:
+    if code:
         secret_key = click.prompt("Secret key", hide_input=True)
     else:
         qr_path = click.prompt("Enter the path of the QR code image")
