@@ -9,6 +9,7 @@ import json
 from math import floor
 import os
 from platformdirs import PlatformDirs
+from tokn.qr import read_qr_code
 
 dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
 KEYS_FILE = dirs.user_data_dir + "/keys"
@@ -23,7 +24,8 @@ def cli(ctx):
 
 @cli.command()
 @click.argument("name", required=True)
-def add(name: str):
+@click.option("-qr", "qr", is_flag=True)
+def add(name: str, qr):
     """Associate a secret key to the service NAME.
 
     NAME is the name of the service.
@@ -35,7 +37,20 @@ def add(name: str):
     except InvalidToken:
         raise click.ClickException("Incorrect password.")
 
-    secret_key = click.prompt("Secret key", hide_input=True)
+    if not qr:
+        secret_key = click.prompt("Secret key", hide_input=True)
+    else:
+        qr_path = click.prompt("Enter the path of the QR code image")
+
+        try:
+            code = read_qr_code(qr_path)
+        except ValueError:
+            raise click.ClickException(
+                "Could not extract QR code from image. "
+                "Please ensure the image is valid."
+            )
+
+        secret_key = pyotp.parse_uri(code).secret
 
     if name in keys_dict:
         click.confirm("That service is already added. Override?", abort=True)
