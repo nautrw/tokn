@@ -24,7 +24,12 @@ def cli(ctx):
 
 @cli.command()
 @click.argument("name", required=True)
-@click.option("-qr", "qr", is_flag=True)
+@click.option(
+    "--qr",
+    "qr",
+    type=str,
+    help="Scan a QR code from the image file to get the secret key.",
+)
 def add(name: str, qr):
     """Associate a secret key to the service NAME.
 
@@ -61,7 +66,7 @@ def add(name: str, qr):
     key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys_dict), salt, key)
 
-    click.echo(f"Successfully added key to {name}")
+    click.echo(f"Successfully added key as `{name}`.")
 
 
 @cli.command()
