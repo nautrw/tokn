@@ -4,3 +4,5 @@ pytest
 cryptography
 click-aliases
 platformdirs
+zxing-cpp
+opencv-python-headless
