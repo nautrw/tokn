@@ -58,10 +58,14 @@ def add(name: str, code):
 
         secret_key = pyotp.parse_uri(code).secret
 
+    clean_secret = secret_key.replace(" ", "").upper()
+    if not otp.is_valid_secret(clean_secret):
+        raise click.ClickException("Invalid secret key.")
+
     if name in keys_dict:
         click.confirm("That service is already added. Override?", abort=True)
 
-    keys_dict[name] = secret_key
+    keys_dict[name] = clean_secret
 
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password, salt)
