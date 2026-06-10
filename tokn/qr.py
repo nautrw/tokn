@@ -1,7 +1,7 @@
 import os
 import cv2
 import pathlib
-import zxingcpp
+import zxingcpp  # ty:ignore[unresolved-import]
 import os
 
 
