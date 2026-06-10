@@ -18,7 +18,7 @@ KEYS_FILE = dirs.user_data_dir + "/keys"
 @click.pass_context
 def cli(ctx):
     if not os.path.isfile(KEYS_FILE) and not ctx.invoked_subcommand == "init":
-        exit("Keys file not initialized. Please run `tokn init`.")
+        raise click.ClickException("Keys file not initialized. Please run `tokn init`.")
 
 
 @cli.command()
@@ -33,7 +33,7 @@ def add(name: str):
     try:
         keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
     except InvalidToken:
-        exit("Incorrect password.")
+        raise click.ClickException("Incorrect password.")
 
     secret_key = click.prompt("Secret key", hide_input=True)
 
@@ -61,10 +61,10 @@ def get(name: str):
     try:
         keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
     except InvalidToken:
-        exit("Incorrect password.")
+        raise click.ClickException("Incorrect password.")
 
     if name not in keys_dict:
-        exit("Invalid service name.")
+        raise click.ClickException("Invalid service name.")
 
     secret_key = keys_dict[name]
 
@@ -81,13 +81,13 @@ def get(name: str):
 def init():
     """Set up a new keys file."""
     if os.path.isfile(KEYS_FILE):
-        exit("There is already an existing keys file.")
+        raise click.ClickException("There is already an existing keys file.")
 
     new_password = click.prompt("Create a new password", hide_input=True)
     password_confirm = click.prompt("Confirm your password", hide_input=True)
 
     if not new_password == password_confirm:
-        exit("Passwords must be the same. Please try again.")
+        raise click.ClickException("Passwords must be the same. Please try again.")
 
     random_salt = os.urandom(16)
     key = encryption.gen_password_key(new_password.encode(), random_salt)
@@ -116,7 +116,7 @@ def change_password():
 
         click.echo("Successfully changed password.")
     else:
-        exit("Passwords must be the same. Please try again.")
+        raise click.ClickException("Passwords must be the same. Please try again.")
 
 
 @cli.command()
@@ -127,7 +127,7 @@ def list():
     try:
         keys = encryption.get_keys_with_password(KEYS_FILE, password)
     except InvalidToken:
-        exit("Incorrect password.")
+        raise click.ClickException("Incorrect password.")
 
     if not (keys_names := keys.keys()):
         click.echo("No services found.")
@@ -145,10 +145,10 @@ def remove(name):
     try:
         keys = encryption.get_keys_with_password(KEYS_FILE, password)
     except InvalidToken:
-        exit("Incorrect password.")
+        raise click.ClickException("Incorrect password.")
 
     if name not in keys:
-        exit("That service is not in your keys file.")
+        raise click.ClickException("That service is not in your keys file.")
 
     del keys[name]
 
