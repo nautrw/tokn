@@ -10,7 +10,9 @@ def read_qr_code(filename: str):
         raise ValueError("invalid file")
 
     img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-    _, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    _, img = cv2.threshold(
+        img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    )  # ty:ignore[no-matching-overload]
 
     qr_results = zxingcpp.read_barcodes(img)
 
