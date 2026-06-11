@@ -123,7 +123,7 @@ def init():
     click.echo(f"Successfully created new keys file at {KEYS_FILE}.")
 
 
-@cli.command(aliases=["passwd"])
+@cli.command()
 def change_password():
     """Change the password of the encrypted file."""
     current_password = click.prompt("Current password", hide_input=True).encode()
