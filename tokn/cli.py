@@ -1,3 +1,4 @@
+from collections import defaultdict
 from hashlib import new
 import click
 from click_aliases import ClickAliasedGroup
@@ -154,11 +155,23 @@ def list():
     except InvalidToken:
         raise click.ClickException("Incorrect password.")
 
-    if not (keys_names := keys.keys()):
-        click.echo("No services found.")
+    if not keys:
+        click.echo("No keys found in keys file.")
     else:
-        for i, name in enumerate(keys_names):
-            click.echo(f"{i + 1}: {name}")
+        # no, defaultdict will not work and I don't know why
+        entries = {}
+
+        for key in keys:
+            if key["issuer"] not in entries.keys():
+                entries[key["issuer"]] = []
+
+            entries[key["issuer"]].append(key["label"])
+
+        for entry in entries:
+            click.echo(entry)
+
+            for label in entries[entry]:
+                click.echo(f" - {label}")
 
 
 @cli.command(aliases=["rm"])
