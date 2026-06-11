@@ -84,22 +84,38 @@ def get(name: str):
     password = click.prompt("Enter your password", hide_input=True).encode()
 
     try:
-        keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
+        keys = encryption.get_keys_with_password(KEYS_FILE, password)
     except InvalidToken:
         raise click.ClickException("Incorrect password.")
 
-    if name not in keys_dict:
-        raise click.ClickException("Invalid service name.")
+    # if name not in keys:
+    #     raise click.ClickException("Invalid service name.")
+    
+    entries = {}
+    
+    for key in keys:
+        if key["issuer"] not in entries.keys():
+            entries[key["issuer"]] = []
+            
+        entries[key["issuer"]].append({"label": key["label"], "secret": key["secret"]})
+   
+    for entry in entries:
+        click.echo(entry)
+        accounts = entries[entry]
+        
+        for account in accounts:
+            click.echo(f"- {account['label']}")
+            secret_key = account["secret"]
+            
+            totp = otp.generate_totp(secret_key)
+            time_remaining = otp.get_time_remaining(secret_key)
+            next_code = otp.get_next_totp(secret_key)
 
-    secret_key = keys_dict[name]
-
-    totp = otp.generate_totp(secret_key)
-    time_remaining = otp.get_time_remaining(secret_key)
-    next_code = otp.get_next_totp(secret_key)
-
-    click.echo(f"Code: {totp}")
-    click.echo(f"{floor(time_remaining)} seconds left")
-    click.echo(f"Next code: {next_code}")
+            click.echo(f"   Code: {totp}")
+            click.echo(f"   {floor(time_remaining)} seconds left")
+            click.echo(f"   Next code: {next_code}")
+        
+        click.echo()
 
 
 @cli.command()
