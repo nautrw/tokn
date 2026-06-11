@@ -1,4 +1,3 @@
-from collections import defaultdict
 from hashlib import new
 import click
 from click_aliases import ClickAliasedGroup
