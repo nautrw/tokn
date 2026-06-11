@@ -23,15 +23,15 @@ def cli(ctx):
 
 
 @cli.command()
-@click.argument("name", required=True)
+@click.argument("issuer", required=True)
+@click.argument("label", required=True)
 @click.option(
     "--code",
     "code",
-    type=str,
     is_flag=True,
     help="Use a raw Base32 secret key code.",
 )
-def add(name: str, code):
+def add(issuer: str, label: str, code):
     """Associate a secret key to the service NAME.
 
     NAME is the name of the service.
@@ -62,16 +62,16 @@ def add(name: str, code):
     if not otp.is_valid_secret(clean_secret):
         raise click.ClickException("Invalid secret key.")
 
-    if name in keys_dict:
+    if issuer in keys_dict:
         click.confirm("That service is already added. Override?", abort=True)
 
-    keys_dict[name] = clean_secret
+    keys_dict.append({"issuer": issuer, "label": label, "secret": secret_key})
 
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys_dict), salt, key)
 
-    click.echo(f"Successfully added key as `{name}`.")
+    click.echo(f"Successfully added key as `{issuer}`.")
 
 
 @cli.command()
@@ -118,7 +118,7 @@ def init():
     key = encryption.gen_password_key(new_password.encode(), random_salt)
 
     open(KEYS_FILE, "x")
-    encryption.encrypt_to_file(KEYS_FILE, "{}", random_salt, key)
+    encryption.encrypt_to_file(KEYS_FILE, "[]", random_salt, key)
 
     click.echo(f"Successfully created new keys file at {KEYS_FILE}.")
 
