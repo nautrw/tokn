@@ -88,34 +88,24 @@ def get(name: str):
     except InvalidToken:
         raise click.ClickException("Incorrect password.")
 
-    # if name not in keys:
-    #     raise click.ClickException("Invalid service name.")
+    issuers = set([entry["issuer"] for entry in keys])
     
-    entries = {}
+    if name not in issuers:
+        raise click.ClickException(f"No issuer {name} found.")
     
-    for key in keys:
-        if key["issuer"] not in entries.keys():
-            entries[key["issuer"]] = []
-            
-        entries[key["issuer"]].append({"label": key["label"], "secret": key["secret"]})
-   
-    for entry in entries:
-        click.echo(entry)
-        accounts = entries[entry]
+    accounts = [key for key in keys if key["issuer"] == name]
+    
+    for account in accounts:
+        click.echo(f"- {account['label']}")
+        secret_key = account["secret"]
         
-        for account in accounts:
-            click.echo(f"- {account['label']}")
-            secret_key = account["secret"]
-            
-            totp = otp.generate_totp(secret_key)
-            time_remaining = otp.get_time_remaining(secret_key)
-            next_code = otp.get_next_totp(secret_key)
+        totp = otp.generate_totp(secret_key)
+        time_remaining = otp.get_time_remaining(secret_key)
+        next_code = otp.get_next_totp(secret_key)
 
-            click.echo(f"   Code: {totp}")
-            click.echo(f"   {floor(time_remaining)} seconds left")
-            click.echo(f"   Next code: {next_code}")
-        
-        click.echo()
+        click.echo(f"   Code: {totp}")
+        click.echo(f"   {floor(time_remaining)} seconds left")
+        click.echo(f"   Next code: {next_code}")
 
 
 @cli.command()
