@@ -107,7 +107,7 @@ def get(name: str):
 def init():
     """Set up a new keys file."""
     if os.path.isfile(KEYS_FILE):
-        raise click.ClickException("There is already an existing keys file.")
+        raise click.ClickException(f"There is already an existing keys file at {KEYS_FILE}.")
 
     new_password = click.prompt("Create a new password", hide_input=True)
     password_confirm = click.prompt("Confirm your password", hide_input=True)
