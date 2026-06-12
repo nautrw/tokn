@@ -3,7 +3,7 @@ import click
 import pyotp
 from cryptography.fernet import InvalidToken
 from platformdirs import PlatformDirs
-
+import os
 import tokn.encryption as encryption
 import tokn.otp as otp
 from tokn.qr import read_qr_code
