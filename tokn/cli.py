@@ -24,8 +24,6 @@ def cli(ctx):
     if not os.path.isfile(KEYS_FILE) and not ctx.invoked_subcommand == "init":
         raise click.ClickException("Keys file not initialized. Please run `tokn init`.")
 
-
-@cli.command()
 @click.argument("name", required=True)
 def get(name: str):
     """Retrieve the TOTP code of the service NAME.

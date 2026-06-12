@@ -60,3 +60,32 @@ def qr():
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys_dict), salt, key)
     
     click.echo(f"Successfully added key under issuer {parsed_uri.issuer}.")
+
+@add.command()
+def code():
+    password = click.prompt("Enter your password", hide_input=True).encode()
+
+    try:                                                                     
+        keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
+    except InvalidToken:
+        raise click.ClickException("Incorrect password.")
+
+    issuer = click.prompt("Issuer of key")
+    label = click.prompt("A label for this key")
+    secret_key = click.prompt("Secret key", hide_input=True)
+    
+    clean_secret = secret_key.replace(" ", "").upper()
+    if not otp.is_valid_secret(clean_secret):
+        raise click.ClickException("Invalid secret key.")
+   
+    keys_dict.append({
+        "issuer": issuer,
+        "label": label,
+        "secret": secret_key
+    })
+    
+    salt = encryption.get_file_info(KEYS_FILE)[0]
+    key = encryption.gen_password_key(password, salt)
+    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys_dict), salt, key)
+    
+    click.echo(f"Successfully added key under issuer {issuer}.")
