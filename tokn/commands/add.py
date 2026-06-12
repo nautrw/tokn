@@ -1,6 +1,4 @@
 import json
-from ast import parse
-
 import click
 import pyotp
 from cryptography.fernet import InvalidToken
