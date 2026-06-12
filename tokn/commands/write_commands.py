@@ -87,7 +87,7 @@ def code():
     
     click.echo(f"Successfully added key under issuer {issuer}.")
 
-@click.command(aliases=["rm"])
+@click.command()
 @click.argument("name", required=True)
 def remove(name):
     """Remove a service NAME from the keys file."""
