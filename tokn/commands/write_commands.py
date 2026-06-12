@@ -13,10 +13,12 @@ KEYS_FILE = dirs.user_data_dir + "/keys"
 
 @click.group()
 def add():
+    """Add a new secret key. May get a QR code (qr) or a raw secret key (code)."""
     pass
 
 @add.command()
 def qr():
+    """Get the secret key by scanning a QR code."""
     password = click.prompt("Enter your password", hide_input=True).encode()
 
     try:                                                                     
@@ -60,6 +62,7 @@ def qr():
 
 @add.command()
 def code():
+    """Enter a raw secret key."""
     password = click.prompt("Enter your password", hide_input=True).encode()
 
     try:                                                                     
