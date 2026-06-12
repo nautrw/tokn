@@ -10,6 +10,7 @@ import tokn.otp as otp
 dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
 KEYS_FILE = dirs.user_data_dir + "/keys"
 
+@click.command()
 @click.argument("name", required=True)
 def get(name: str):
     """Retrieve the TOTP code of the service NAME.
@@ -41,3 +42,31 @@ def get(name: str):
         click.echo(f"   Code: {totp}")
         click.echo(f"   {floor(time_remaining)} seconds left")
         click.echo(f"   Next code: {next_code}")
+
+@click.command()
+def list():
+    """List all the services in the keys file."""
+    password = click.prompt("Enter your password", hide_input=True).encode()
+
+    try:
+        keys = encryption.get_keys_with_password(KEYS_FILE, password)
+    except InvalidToken:
+        raise click.ClickException("Incorrect password.")
+
+    if not keys:
+        click.echo("No keys found in keys file.")
+    else:
+        # no, defaultdict will not work and I don't know why
+        entries = {}
+
+        for key in keys:
+            if key["issuer"] not in entries.keys():
+                entries[key["issuer"]] = []
+
+            entries[key["issuer"]].append(key["label"])
+
+        for entry in entries:
+            click.echo(entry)
+
+            for label in entries[entry]:
+                click.echo(f" - {label}")

@@ -12,7 +12,7 @@ from platformdirs import PlatformDirs
 import tokn.encryption as encryption
 import tokn.otp as otp
 from tokn.commands.add import add
-from tokn.commands.get import get
+from tokn.commands.getters import get, list
 from tokn.qr import read_qr_code
 
 dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
@@ -68,36 +68,6 @@ def change_password():
     else:
         raise click.ClickException("Passwords must be the same. Please try again.")
 
-
-@cli.command()
-def list():
-    """List all the services in the keys file."""
-    password = click.prompt("Enter your password", hide_input=True).encode()
-
-    try:
-        keys = encryption.get_keys_with_password(KEYS_FILE, password)
-    except InvalidToken:
-        raise click.ClickException("Incorrect password.")
-
-    if not keys:
-        click.echo("No keys found in keys file.")
-    else:
-        # no, defaultdict will not work and I don't know why
-        entries = {}
-
-        for key in keys:
-            if key["issuer"] not in entries.keys():
-                entries[key["issuer"]] = []
-
-            entries[key["issuer"]].append(key["label"])
-
-        for entry in entries:
-            click.echo(entry)
-
-            for label in entries[entry]:
-                click.echo(f" - {label}")
-
-
 @cli.command(aliases=["rm"])
 @click.argument("name", required=True)
 def remove(name):
@@ -127,3 +97,4 @@ def remove(name):
 
 cli.add_command(add)
 cli.add_command(get)
+cli.add_command(list)
