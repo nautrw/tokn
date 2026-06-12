@@ -1,14 +1,16 @@
+import json
+import os
 from hashlib import new
+from math import floor
+
 import click
+import pyotp
 from click_aliases import ClickAliasedGroup
 from cryptography.fernet import InvalidToken
-import tokn.otp as otp
-import pyotp
-import tokn.encryption as encryption
-import json
-from math import floor
-import os
 from platformdirs import PlatformDirs
+
+import tokn.encryption as encryption
+import tokn.otp as otp
 from tokn.qr import read_qr_code
 
 dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
@@ -23,14 +25,7 @@ def cli(ctx):
 
 
 @cli.command()
-@click.argument("issuer", required=True)
-@click.argument("label", required=True)
-@click.option(
-    "--code",
-    "code",
-    is_flag=True,
-    help="Use a raw Base32 secret key code.",
-)
+@click.group(cls=ClickAliasedGroup)
 def add(issuer: str, label: str, code):
     """Associate a secret key to the service NAME.
 
@@ -89,16 +84,16 @@ def get(name: str):
         raise click.ClickException("Incorrect password.")
 
     issuers = set([entry["issuer"] for entry in keys])
-    
+
     if name not in issuers:
         raise click.ClickException(f"No issuer {name} found.")
-    
+
     accounts = [key for key in keys if key["issuer"] == name]
-    
+
     for account in accounts:
         click.echo(f"- {account['label']}")
         secret_key = account["secret"]
-        
+
         totp = otp.generate_totp(secret_key)
         time_remaining = otp.get_time_remaining(secret_key)
         next_code = otp.get_next_totp(secret_key)
@@ -112,7 +107,9 @@ def get(name: str):
 def init():
     """Set up a new keys file."""
     if os.path.isfile(KEYS_FILE):
-        raise click.ClickException(f"There is already an existing keys file at {KEYS_FILE}.")
+        raise click.ClickException(
+            f"There is already an existing keys file at {KEYS_FILE}."
+        )
 
     new_password = click.prompt("Create a new password", hide_input=True)
     password_confirm = click.prompt("Confirm your password", hide_input=True)
