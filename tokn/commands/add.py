@@ -12,8 +12,7 @@ dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
 KEYS_FILE = dirs.user_data_dir + "/keys"
 
 @click.group()
-@click.pass_context
-def add(ctx):
+def add():
     pass
 
 @add.command()
