@@ -11,7 +11,7 @@ from platformdirs import PlatformDirs
 
 import tokn.encryption as encryption
 import tokn.otp as otp
-from tokn.commands.add import add
+from tokn.commands.write_commands import add, remove
 from tokn.commands.getters import get, list
 from tokn.qr import read_qr_code
 
@@ -30,7 +30,7 @@ def init():
     """Set up a new keys file."""
     if os.path.isfile(KEYS_FILE):
         raise click.ClickException(
-            f"There is already an existing keys file at {KEYS_FILE}."
+            f"There is already an existing keys file at ."
         )
 
     new_password = click.prompt("Create a new password", hide_input=True)
@@ -68,33 +68,8 @@ def change_password():
     else:
         raise click.ClickException("Passwords must be the same. Please try again.")
 
-@cli.command(aliases=["rm"])
-@click.argument("name", required=True)
-def remove(name):
-    """Remove a service NAME from the keys file."""
-    password = click.prompt("Enter your password", hide_input=True).encode()
-
-    try:
-        keys = encryption.get_keys_with_password(KEYS_FILE, password)
-    except InvalidToken:
-        raise click.ClickException("Incorrect password.")
-
-    if name not in keys:
-        raise click.ClickException("That service is not in your keys file.")
-
-    del keys[name]
-
-    click.confirm(
-        "Are you sure you want to delete this key? This action can not be reversed.",
-        abort=True,
-    )
-
-    salt = encryption.get_file_info(KEYS_FILE)[0]
-    key = encryption.gen_password_key(password, salt)
-    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
-
-    click.echo(f"Successfully removed {name} from your keys.")
 
 cli.add_command(add)
+cli.add_command(remove)
 cli.add_command(get)
 cli.add_command(list)

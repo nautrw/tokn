@@ -86,3 +86,30 @@ def code():
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys_dict), salt, key)
     
     click.echo(f"Successfully added key under issuer {issuer}.")
+
+@click.command(aliases=["rm"])
+@click.argument("name", required=True)
+def remove(name):
+    """Remove a service NAME from the keys file."""
+    password = click.prompt("Enter your password", hide_input=True).encode()
+
+    try:
+        keys = encryption.get_keys_with_password(KEYS_FILE, password)
+    except InvalidToken:
+        raise click.ClickException("Incorrect password.")
+
+    if name not in keys:
+        raise click.ClickException("That service is not in your keys file.")
+
+    del keys[name]
+
+    click.confirm(
+        "Are you sure you want to delete this key? This action can not be reversed.",
+        abort=True,
+    )
+
+    salt = encryption.get_file_info(KEYS_FILE)[0]
+    key = encryption.gen_password_key(password, salt)
+    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
+
+    click.echo(f"Successfully removed {name} from your keys.")
