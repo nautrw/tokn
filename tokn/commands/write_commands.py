@@ -113,3 +113,23 @@ def remove(name):
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
 
     click.echo(f"Successfully removed {name} from your keys.")
+
+@click.command()
+def change_password():
+    """Change the password of the encrypted file."""
+    current_password = click.prompt("Current password", hide_input=True).encode()
+
+    file = encryption.get_keys_with_password(KEYS_FILE, current_password)
+
+    new_password = click.prompt("Create a new password", hide_input=True)
+    new_password_confirm = click.prompt("Confirm your password", hide_input=True)
+
+    if new_password == new_password_confirm:
+        new_salt = os.urandom(16)
+        new_key = encryption.gen_password_key(new_password.encode(), new_salt)
+
+        encryption.encrypt_to_file(KEYS_FILE, json.dumps(file), new_salt, new_key)
+
+        click.echo("Successfully changed password.")
+    else:
+        raise click.ClickException("Passwords must be the same. Please try again.")
