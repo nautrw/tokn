@@ -15,14 +15,11 @@ def add():
     pass
 
 @add.command()
-def qr():
+@click.pass_context
+def qr(ctx):
     """Get the secret key by scanning a QR code."""
-    password = click.prompt("Enter your password", hide_input=True).encode()
-
-    try:                                                                     
-        keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
-    except InvalidToken:
-        raise click.ClickException("Incorrect password.")
+    keys = ctx.obj["keys"]
+    password = ctx.obj["password"]
     
     qr_path = click.prompt("Enter the path of the QR code image")
     
@@ -46,7 +43,7 @@ def qr():
     click.echo(f"Label: {parsed_uri.name}")
     click.confirm("Are you sure you want to add this key?", abort=True)
 
-    keys_dict.append({
+    keys.append({
         "issuer": parsed_uri.issuer,
         "label": parsed_uri.name,
         "secret": parsed_uri.secret
@@ -54,19 +51,16 @@ def qr():
     
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password, salt)
-    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys_dict), salt, key)
+    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
     
     click.echo(f"Successfully added key under issuer {parsed_uri.issuer}.")
 
 @add.command()
-def code():
+@click.pass_context
+def code(ctx):
     """Enter a raw secret key."""
-    password = click.prompt("Enter your password", hide_input=True).encode()
-
-    try:                                                                     
-        keys_dict = encryption.get_keys_with_password(KEYS_FILE, password)
-    except InvalidToken:
-        raise click.ClickException("Incorrect password.")
+    keys = ctx.obj["keys"]
+    password = ctx.obj["password"]
 
     issuer = click.prompt("Issuer of key")
     label = click.prompt("A label for this key")
@@ -76,7 +70,7 @@ def code():
     if not otp.is_valid_secret(clean_secret):
         raise click.ClickException("Invalid secret key.")
    
-    keys_dict.append({
+    keys.append({
         "issuer": issuer,
         "label": label,
         "secret": secret_key
@@ -84,21 +78,18 @@ def code():
     
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password, salt)
-    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys_dict), salt, key)
+    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
     
     click.echo(f"Successfully added key under issuer {issuer}.")
 
 @click.command()
 @click.argument("name", required=True)
-def remove(name):
+@click.pass_context
+def remove(ctx, name):
     """Remove a service NAME from the keys file."""
-    password = click.prompt("Enter your password", hide_input=True).encode()
-
-    try:
-        keys = encryption.get_keys_with_password(KEYS_FILE, password)
-    except InvalidToken:
-        raise click.ClickException("Incorrect password.")
-
+    keys = ctx.obj["keys"]
+    password = ctx.obj["password"]
+    
     if name not in keys:
         raise click.ClickException("That service is not in your keys file.")
 
@@ -116,9 +107,10 @@ def remove(name):
     click.echo(f"Successfully removed {name} from your keys.")
 
 @click.command()
-def change_password():
+@click.pass_context
+def change_password(ctx):
     """Change the password of the encrypted file."""
-    current_password = click.prompt("Current password", hide_input=True).encode()
+    current_password = ctx.obj["password"]
 
     file = encryption.get_keys_with_password(KEYS_FILE, current_password)
 

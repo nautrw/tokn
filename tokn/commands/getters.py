@@ -10,17 +10,13 @@ import tokn.otp as otp
 
 @click.command()
 @click.argument("issuer", required=True)
-def get(issuer: str):
+@click.pass_context
+def get(ctx, issuer: str):
     """Retrieve TOTP codes of all accounts under the ISSUER.
 
     ISSUER is the name of the issuer.
     """
-    password = click.prompt("Enter your password", hide_input=True).encode()
-
-    try:
-        keys = encryption.get_keys_with_password(KEYS_FILE, password)
-    except InvalidToken:
-        raise click.ClickException("Incorrect password.")
+    keys = ctx.obj["keys"]
 
     issuers = set([entry["issuer"] for entry in keys])
 
@@ -42,14 +38,10 @@ def get(issuer: str):
         click.echo(f"   Next code: {next_code}")
 
 @click.command()
-def list():
+@click.pass_context
+def list(ctx):
     """List all the services in the keys file."""
-    password = click.prompt("Enter your password", hide_input=True).encode()
-
-    try:
-        keys = encryption.get_keys_with_password(KEYS_FILE, password)
-    except InvalidToken:
-        raise click.ClickException("Incorrect password.")
+    keys = ctx.obj["keys"]
 
     if not keys:
         click.echo("No keys found in keys file.")
