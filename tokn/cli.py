@@ -20,7 +20,8 @@ KEYS_FILE = dirs.user_data_dir + "/keys"
 
 
 @click.group(cls=ClickAliasedGroup)
-def cli():
+@click.pass_context
+def cli(ctx):
     if not os.path.isfile(KEYS_FILE):
         click.echo("New user detected. Starting setup.")
 
