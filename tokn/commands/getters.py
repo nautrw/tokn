@@ -2,13 +2,11 @@ from math import floor
 
 import click
 from cryptography.fernet import InvalidToken
-from platformdirs import PlatformDirs
 
 import tokn.encryption as encryption
+from tokn.encryption import KEYS_FILE
 import tokn.otp as otp
 
-dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
-KEYS_FILE = dirs.user_data_dir + "/keys"
 
 @click.command()
 @click.argument("issuer", required=True)

@@ -4,7 +4,10 @@ import json
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.argon2 import Argon2id
+from platformdirs import PlatformDirs
 
+dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
+KEYS_FILE = dirs.user_data_dir + "/keys"
 
 def gen_password_key(password: bytes, salt: bytes) -> bytes:
     kdf = Argon2id(

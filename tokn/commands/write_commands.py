@@ -2,14 +2,12 @@ import json
 import click
 import pyotp
 from cryptography.fernet import InvalidToken
-from platformdirs import PlatformDirs
 import os
 import tokn.encryption as encryption
+from tokn.encryption import KEYS_FILE
 import tokn.otp as otp
 from tokn.qr import read_qr_code
 
-dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
-KEYS_FILE = dirs.user_data_dir + "/keys"
 
 @click.group()
 def add():
