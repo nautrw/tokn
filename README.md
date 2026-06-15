@@ -22,7 +22,7 @@ Windows: `C:\Users\USER\AppData\Local\nautrw\tokn/keys`
 
 - Commands are split among several files in `tokn/commands`, and imported back into `tokn/cli.py` to be added under the `cli` command group, allowing for commands like `tokn add`
 - A `pyproject.toml` file is used for treating the project as a package, allowing the use of `pip install -e .` and uploading to PyPI in the future
-- - The `cli` function in `tokn/cli.py` is what gets run; it is specified in the `[project.scripts]` section in the file
+- The `cli` function in `tokn/cli.py` is what gets run; it is specified in the `[project.scripts]` section in the file
 
 ### Technologies/libraries used
 - The `pyotp` library is used to generate the TOTP codes as specified in [RFC 6238](https://www.rfc-editor.org/info/rfc6238/)
