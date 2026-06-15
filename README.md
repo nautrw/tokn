@@ -17,3 +17,8 @@ pip install -e .
 - [Argon2](https://argon2.online), as implemented by the `cryptography` library, is used to generate password hashes that are used as keys for `fernet`
 - The `click` library to make it a CLI app
 - The `zxingcpp` and `opencv` libraries for QR code scanning
+## Advanced
+- The keys file is stored in their best location depending on the operating system:
+Linux: `/home/USER/.local/share/tokn/keys`
+MacOS: `/Users/USER/Library/Application Support/tokn/keys`
+Windows: `C:\Users\USER\AppData\Local\nautrw\tokn/keys`
