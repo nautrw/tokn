@@ -7,17 +7,13 @@ import click
 import pyotp
 from click_aliases import ClickAliasedGroup
 from cryptography.fernet import InvalidToken
-from platformdirs import PlatformDirs
 
 import tokn.encryption as encryption
+from tokn.encryption import KEYS_FILE
 import tokn.otp as otp
 from tokn.commands.write_commands import add, remove, change_password
 from tokn.commands.getters import get, list
 from tokn.qr import read_qr_code
-
-dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
-KEYS_FILE = dirs.user_data_dir + "/keys"
-
 
 @click.group(cls=ClickAliasedGroup)
 @click.pass_context
