@@ -11,11 +11,11 @@ dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
 KEYS_FILE = dirs.user_data_dir + "/keys"
 
 @click.command()
-@click.argument("name", required=True)
-def get(name: str):
-    """Retrieve the TOTP code of the service NAME.
+@click.argument("issuer", required=True)
+def get(issuer: str):
+    """Retrieve TOTP codes of all accounts under the ISSUER.
 
-    NAME is the name of the service.
+    ISSUER is the name of the issuer.
     """
     password = click.prompt("Enter your password", hide_input=True).encode()
 
@@ -26,10 +26,10 @@ def get(name: str):
 
     issuers = set([entry["issuer"] for entry in keys])
 
-    if name not in issuers:
-        raise click.ClickException(f"No issuer {name} found.")
+    if issuer not in issuers:
+        raise click.ClickException(f"No issuer {issuer} found.")
 
-    accounts = [key for key in keys if key["issuer"] == name]
+    accounts = [key for key in keys if key["issuer"] == issuer]
 
     for account in accounts:
         click.echo(f"- {account['label']}")
