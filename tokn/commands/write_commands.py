@@ -41,10 +41,6 @@ def add(ctx, code):
         except ValueError:
             raise click.ClickException("Invalid QR code.")
     
-        click.echo(f"Issuer: {parsed_uri.issuer}")
-        click.echo(f"Label: {parsed_uri.name}")
-        click.confirm("Are you sure you want to add this key?", abort=True)
-       
         issuer = parsed_uri.issuer
         label = parsed_uri.name
         secret_key = parsed_uri.secret
