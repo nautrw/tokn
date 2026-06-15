@@ -25,6 +25,8 @@ def add(ctx, code):
         clean_secret = secret_key.replace(" ", "").upper()
         if not otp.is_valid_secret(clean_secret):
             raise click.ClickException("Invalid secret key.")
+        
+        click.confirm("Are you sure you want to add this key?", abort=True)
     else:
         qr_path = click.prompt("Enter the path of the QR code image")
         
