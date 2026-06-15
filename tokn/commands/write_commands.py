@@ -9,79 +9,58 @@ import tokn.otp as otp
 from tokn.qr import read_qr_code
 
 
-@click.group()
-def add():
-    """Add a new secret key. May get a QR code (qr) or a raw secret key (code)."""
-    pass
-
-@add.command()
+@click.command()
+@click.option("--code", is_flag=True)
 @click.pass_context
-def qr(ctx):
-    """Get the secret key by scanning a QR code."""
+def add(ctx, code):
+    """Add a new secret key."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
     
-    qr_path = click.prompt("Enter the path of the QR code image")
+    if code:
+        issuer = click.prompt("Issuer of key")
+        label = click.prompt("A label for this key")
+        secret_key = click.prompt("Secret key", hide_input=True)
+        
+        clean_secret = secret_key.replace(" ", "").upper()
+        if not otp.is_valid_secret(clean_secret):
+            raise click.ClickException("Invalid secret key.")
+    else:
+        qr_path = click.prompt("Enter the path of the QR code image")
+        
+        try:
+            code = read_qr_code(qr_path)
+        except ValueError:
+            raise click.ClickException(
+                "Could not extract QR code from image. "
+                "Please ensure the image is valid."
+            )
+        
+        try:
+            parsed_uri = pyotp.parse_uri(code)
+        except ValueError:
+            raise click.ClickException("Invalid QR code.")
     
-    try:
-        code = read_qr_code(qr_path)
-    except ValueError:
-        raise click.ClickException(
-            "Could not extract QR code from image. "
-            "Please ensure the image is valid."
-        )
+        click.echo(f"Issuer: {parsed_uri.issuer}")
+        click.echo(f"Label: {parsed_uri.name}")
+        click.confirm("Are you sure you want to add this key?", abort=True)
+       
+        issuer = parsed_uri.issuer
+        label = parsed_uri.name
+        secret_key = parsed_uri.secret
     
-    try:
-        parsed_uri = pyotp.parse_uri(code)
-    except ValueError:
-        raise click.ClickException("Invalid QR code.")
-    
-    if not otp.is_valid_secret(parsed_uri.secret):
-        raise click.ClickException("Invalid secret key.")
-
-    click.echo(f"Issuer: {parsed_uri.issuer}")
-    click.echo(f"Label: {parsed_uri.name}")
-    click.confirm("Are you sure you want to add this key?", abort=True)
-
-    keys.append({
-        "issuer": parsed_uri.issuer,
-        "label": parsed_uri.name,
-        "secret": parsed_uri.secret
-    })
-    
-    salt = encryption.get_file_info(KEYS_FILE)[0]
-    key = encryption.gen_password_key(password, salt)
-    encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
-    
-    click.echo(f"Successfully added key under issuer {parsed_uri.issuer}.")
-
-@add.command()
-@click.pass_context
-def code(ctx):
-    """Enter a raw secret key."""
-    keys = ctx.obj["keys"]
-    password = ctx.obj["password"]
-
-    issuer = click.prompt("Issuer of key")
-    label = click.prompt("A label for this key")
-    secret_key = click.prompt("Secret key", hide_input=True)
-    
-    clean_secret = secret_key.replace(" ", "").upper()
-    if not otp.is_valid_secret(clean_secret):
-        raise click.ClickException("Invalid secret key.")
-   
     keys.append({
         "issuer": issuer,
         "label": label,
         "secret": secret_key
     })
-    
+
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
     
     click.echo(f"Successfully added key under issuer {issuer}.")
-
+    
 @click.command()
 @click.argument("issuer", required=True)
 @click.argument("label", required=True)
