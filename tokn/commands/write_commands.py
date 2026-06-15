@@ -83,17 +83,21 @@ def code(ctx):
     click.echo(f"Successfully added key under issuer {issuer}.")
 
 @click.command()
-@click.argument("name", required=True)
+@click.argument("issuer", required=True)
+@click.argument("label", required=True)
 @click.pass_context
-def remove(ctx, name):
+def remove(ctx, issuer, label):
     """Remove a service NAME from the keys file."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
     
-    if name not in keys:
+    issuers = set([entry["issuer"] for entry in keys])
+    if issuer not in issuers:
         raise click.ClickException("That service is not in your keys file.")
 
-    del keys[name]
+    for i, key in enumerate(keys):
+        if key["issuer"] == issuer and key["label"] == label:
+            del keys[i]
 
     click.confirm(
         "Are you sure you want to delete this key? This action can not be reversed.",
@@ -104,7 +108,7 @@ def remove(ctx, name):
     key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
 
-    click.echo(f"Successfully removed {name} from your keys.")
+    click.echo(f"Successfully removed {issuer} from your keys.")
 
 @click.command()
 @click.pass_context
