@@ -37,6 +37,23 @@ def cli():
         encryption.encrypt_to_file(KEYS_FILE, "[]", random_salt, key)
 
         click.echo(f"Successfully created new keys file at {KEYS_FILE}.")
+        
+        ctx.obj = {
+            "password": new_password,
+            "keys": []
+        }
+    else:
+        password = click.prompt("Enter your password", hide_input=True).encode()
+
+        try:
+            keys = encryption.get_keys_with_password(KEYS_FILE, password)
+        except InvalidToken:
+            raise click.ClickException("Incorrect password.")
+
+        ctx.obj = {
+            "password": password,
+            "keys": keys
+        }
 
 cli.add_command(add)
 cli.add_command(remove)
