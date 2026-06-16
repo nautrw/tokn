@@ -12,7 +12,7 @@ import tokn.otp as otp
 @click.argument("issuer", required=True)
 @click.pass_context
 def get(ctx, issuer: str):
-    """Retrieve TOTP codes of all accounts under the ISSUER.
+    """Retrieve TOTP codes of all accounts under issuer ISSUER.
 
     ISSUER is the name of the issuer.
     """
