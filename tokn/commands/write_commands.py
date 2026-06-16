@@ -11,8 +11,9 @@ from tokn.qr import read_qr_code
 
 @click.command()
 @click.option("--code", is_flag=True)
+@click.option("--uri", is_flag=True)
 @click.pass_context
-def add(ctx, code):
+def add(ctx, code, uri):
     """Add a new secret key."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
@@ -27,6 +28,17 @@ def add(ctx, code):
             raise click.ClickException("Invalid secret key.")
         
         click.confirm("Are you sure you want to add this key?", abort=True)
+    elif uri:
+        uri = click.prompt("URI", hide_input=True)
+        
+        try:
+            parsed_uri = pyotp.parse_uri(uri)
+        except ValueError:
+            raise click.ClickException("Invalid URI.")
+        
+        issuer = parsed_uri.issuer
+        label = parsed_uri.name
+        secret_key = parsed_uri.secret
     else:
         qr_path = click.prompt("Enter the path of the QR code image")
         
