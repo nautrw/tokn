@@ -1,3 +1,4 @@
+from tkinter import W
 import json
 import click
 import pyotp
@@ -64,11 +65,21 @@ def add(ctx, code, uri):
         issuer = click.prompt("Issuer")
         label = click.prompt("Label")
 
-    keys.append({
+    new_key_obj = {
         "issuer": issuer,
         "label": label,
         "secret": secret_key
-    })
+    }
+
+    for i, key in enumerate(keys):
+        if key["issuer"] == issuer and key["label"] == label:
+            click.confirm("This key already exists. Override?", abort=True)
+
+            keys[i] = new_key_obj
+        else:
+            keys.append(new_key_obj)
+            break
+
 
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password.encode(), salt)
