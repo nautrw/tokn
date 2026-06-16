@@ -80,7 +80,6 @@ def add(ctx, code, uri):
             keys.append(new_key_obj)
             break
 
-
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password.encode(), salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
