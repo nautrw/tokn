@@ -76,9 +76,8 @@ def add(ctx, code, uri):
 
             keys[i] = new_key_obj
             break
-        else:
-            keys.append(new_key_obj)
-            break
+    else:
+        keys.append(new_key_obj)
 
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password.encode(), salt)
