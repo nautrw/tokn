@@ -40,10 +40,10 @@ def cli(ctx):
             "keys": []
         }
     else:
-        password = click.prompt("Enter your password", hide_input=True).encode()
+        password = click.prompt("Enter your password", hide_input=True)
 
         try:
-            keys = encryption.get_keys_with_password(KEYS_FILE, password)
+            keys = encryption.get_keys_with_password(KEYS_FILE, password.encode())
         except InvalidToken:
             raise click.ClickException("Incorrect password.")
 
