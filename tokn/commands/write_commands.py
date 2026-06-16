@@ -26,8 +26,6 @@ def add(ctx, code, uri):
         clean_secret = secret_key.replace(" ", "").upper()
         if not otp.is_valid_secret(clean_secret):
             raise click.ClickException("Invalid secret key.")
-        
-        click.confirm("Are you sure you want to add this key?", abort=True)
     elif uri:
         uri = click.prompt("URI", hide_input=True)
         
@@ -59,6 +57,13 @@ def add(ctx, code, uri):
         label = parsed_uri.name
         secret_key = parsed_uri.secret
     
+    click.echo(f"Issuer: {issuer}")
+    click.echo(f"Label: {label}")
+
+    if not click.confirm("Are you sure you want to add this key?"):
+        issuer = click.prompt("Issuer")
+        label = click.prompt("Label")
+
     keys.append({
         "issuer": issuer,
         "label": label,
