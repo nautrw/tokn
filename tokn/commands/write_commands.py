@@ -75,6 +75,7 @@ def add(ctx, code, uri):
             click.confirm("This key already exists. Override?", abort=True)
 
             keys[i] = new_key_obj
+            break
         else:
             keys.append(new_key_obj)
             break
