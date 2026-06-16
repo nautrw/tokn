@@ -1,4 +1,3 @@
-from tkinter import W
 import json
 import click
 import pyotp
