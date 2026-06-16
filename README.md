@@ -12,7 +12,7 @@ pip install -e .
 - No secret keys or passwords are exposed to log files and such
 - Adding keys via QR code images
 ## Advanced
-- The keys file is stored in their best location depending on the operating system:
+- The vault is stored in their best location depending on the operating system:
 
 Linux: `/home/USER/.local/share/tokn/keys`
 

@@ -40,11 +40,11 @@ def get(ctx, issuer: str):
 @click.command()
 @click.pass_context
 def list(ctx):
-    """List all the services in the keys file."""
+    """List all the services in the vault."""
     keys = ctx.obj["keys"]
 
     if not keys:
-        click.echo("No keys found in keys file.")
+        click.echo("No keys found in vault.")
     else:
         # no, defaultdict will not work and I don't know why
         entries = {}

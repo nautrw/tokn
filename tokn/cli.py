@@ -33,7 +33,7 @@ def cli(ctx):
         open(KEYS_FILE, "x")
         encryption.encrypt_to_file(KEYS_FILE, "[]", random_salt, key)
 
-        click.echo(f"Successfully created new keys file at {KEYS_FILE}.")
+        click.echo(f"Successfully created new vault at {KEYS_FILE}.")
         
         ctx.obj = {
             "password": new_password,

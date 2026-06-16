@@ -90,13 +90,13 @@ def add(ctx, code, uri):
 @click.argument("label", required=True)
 @click.pass_context
 def remove(ctx, issuer, label):
-    """Remove a service NAME from the keys file."""
+    """Remove a service NAME from the vault."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
     
     issuers = set([entry["issuer"] for entry in keys])
     if issuer not in issuers:
-        raise click.ClickException("That service is not in your keys file.")
+        raise click.ClickException("That service is not in your vault.")
 
     for i, key in enumerate(keys):
         if key["issuer"] == issuer and key["label"] == label:
