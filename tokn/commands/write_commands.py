@@ -71,7 +71,7 @@ def add(ctx, code, uri):
     })
 
     salt = encryption.get_file_info(KEYS_FILE)[0]
-    key = encryption.gen_password_key(password, salt)
+    key = encryption.gen_password_key(password.encode(), salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
     
     click.echo(f"Successfully added key under issuer {issuer}.")
