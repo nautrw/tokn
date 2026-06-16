@@ -21,8 +21,8 @@ def cli(ctx):
     if not os.path.isfile(KEYS_FILE):
         click.echo("New user detected. Starting setup.")
 
-        new_password = click.prompt("Create a new password", hide_input=True)
-        password_confirm = click.prompt("Confirm your password", hide_input=True)
+        new_password = click.prompt("New password", hide_input=True)
+        password_confirm = click.prompt("Confirm new password", hide_input=True)
 
         if not new_password == password_confirm:
             raise click.ClickException("Passwords must be the same. Please try again.")
@@ -33,7 +33,7 @@ def cli(ctx):
         open(KEYS_FILE, "x")
         encryption.encrypt_to_file(KEYS_FILE, "[]", random_salt, key)
 
-        click.echo(f"Successfully created new vault at {KEYS_FILE}.")
+        click.echo(f'Successfully created new vault at path "{KEYS_FILE}".')
         
         ctx.obj = {
             "password": new_password,

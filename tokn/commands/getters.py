@@ -21,7 +21,7 @@ def get(ctx, issuer: str):
     issuers = set([entry["issuer"] for entry in keys])
 
     if issuer not in issuers:
-        raise click.ClickException(f"No issuer {issuer} found.")
+        raise click.ClickException(f'No issuer "{issuer}" found.')
 
     accounts = [key for key in keys if key["issuer"] == issuer]
 

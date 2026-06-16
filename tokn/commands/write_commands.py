@@ -20,7 +20,7 @@ def add(ctx, code, uri):
     
     if code:
         issuer = click.prompt("Issuer of key")
-        label = click.prompt("A label for this key")
+        label = click.prompt("Account name")
         secret_key = click.prompt("Secret key", hide_input=True)
         
         clean_secret = secret_key.replace(" ", "").upper()
@@ -38,7 +38,7 @@ def add(ctx, code, uri):
         label = parsed_uri.name
         secret_key = parsed_uri.secret
     else:
-        qr_path = click.prompt("Enter the path of the QR code image")
+        qr_path = click.prompt("QR code image path")
         
         try:
             code = read_qr_code(qr_path)
@@ -83,7 +83,7 @@ def add(ctx, code, uri):
     key = encryption.gen_password_key(password.encode(), salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
     
-    click.echo(f"Successfully added key under issuer {issuer}.")
+    click.echo(f'Successfully added key under issuer "{issuer}".')
     
 @click.command()
 @click.argument("issuer", required=True)
@@ -111,7 +111,7 @@ def remove(ctx, issuer, label):
     key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
 
-    click.echo(f"Successfully removed {issuer} from your keys.")
+    click.echo(f'Successfully removed issuer "{issuer}" from your vault.')
 
 @click.command()
 @click.pass_context
@@ -121,8 +121,8 @@ def change_password(ctx):
 
     file = encryption.get_keys_with_password(KEYS_FILE, current_password)
 
-    new_password = click.prompt("Create a new password", hide_input=True)
-    new_password_confirm = click.prompt("Confirm your password", hide_input=True)
+    new_password = click.prompt("New password", hide_input=True)
+    new_password_confirm = click.prompt("Confirm new password", hide_input=True)
 
     if new_password == new_password_confirm:
         new_salt = os.urandom(16)
