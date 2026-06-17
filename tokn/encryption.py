@@ -24,7 +24,8 @@ def encrypt_to_file(filename: str, text: str, salt: bytes, key: bytes) -> None:
 
     with open(filename, "wb") as f:
         # Encoding the salt in base64 solves the issue
-        # of arbitrary bytes mixed with normal text
+        # of arbitrary bytes mixed with normal text,
+        # which can throw off the program when reading the file
         f.write(base64.b64encode(salt))
         f.write(b"\n")
         # Token is already base64
