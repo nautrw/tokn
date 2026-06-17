@@ -23,8 +23,11 @@ def encrypt_to_file(filename: str, text: str, salt: bytes, key: bytes) -> None:
     token = fernet.encrypt(text.encode())
 
     with open(filename, "wb") as f:
+        # Encoding the salt in base64 solves the issue
+        # of arbitrary bytes mixed with normal text
         f.write(base64.b64encode(salt))
         f.write(b"\n")
+        # Token is already base64
         f.write(token)
 
 
