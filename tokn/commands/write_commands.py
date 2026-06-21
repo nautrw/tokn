@@ -14,7 +14,7 @@ from tokn.qr import read_qr_code
 @click.option("--uri", is_flag=True)
 @click.pass_context
 def add(ctx, code, uri):
-    """Add a new secret key."""
+    """Add a new account to the vault."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
     
@@ -60,7 +60,7 @@ def add(ctx, code, uri):
     click.echo(f"Issuer: {issuer}")
     click.echo(f"Label: {label}")
 
-    if not click.confirm("Are you sure you want to add this key?"):
+    if not click.confirm("Are you sure you want to add this account?"):
         issuer = click.prompt("Issuer")
         label = click.prompt("Label")
 
@@ -87,23 +87,24 @@ def add(ctx, code, uri):
     
 @click.command()
 @click.argument("issuer", required=True)
-@click.argument("label", required=True)
+@click.argument("name", required=True)
 @click.pass_context
 def remove(ctx, issuer, label):
-    """Remove a service NAME from the vault."""
+    """Remove an account NAME from the vault with issuer ISSUER."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
     
     issuers = set([entry["issuer"] for entry in keys])
     if issuer not in issuers:
-        raise click.ClickException("That service is not in your vault.")
+        raise click.ClickException("That account is not in your vault.")
 
     for i, key in enumerate(keys):
         if key["issuer"] == issuer and key["label"] == label:
             del keys[i]
 
     click.confirm(
-        "Are you sure you want to delete this key? This action can not be reversed.",
+        "Are you sure you want to delete this account from your vault?"
+        "This action can not be reversed.",
         abort=True,
     )
 
@@ -111,12 +112,13 @@ def remove(ctx, issuer, label):
     key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
 
-    click.echo(f'Successfully removed issuer "{issuer}" from your vault.')
+    click.echo(f'Successfully removed account "{issuer}:{label}"'
+               'from your vault.')
 
 @click.command()
 @click.pass_context
 def change_password(ctx):
-    """Change the password of the encrypted file."""
+    """Change the password of the vault."""
     current_password = ctx.obj["password"]
 
     file = encryption.get_keys_with_password(KEYS_FILE, current_password)
