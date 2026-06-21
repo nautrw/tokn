@@ -62,9 +62,7 @@ def add(ctx: click.core.Context, code, uri):
     click.echo(f"Issuer: {issuer}")
     click.echo(f"Label: {label}")
 
-    if not click.confirm("Are you sure you want to add this account?"):
-        issuer = click.prompt("Issuer")
-        label = click.prompt("Label")
+    click.confirm("Are you sure you want to add this account?", abort=True)
 
     new_key_obj = {
         "issuer": issuer,
