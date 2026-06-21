@@ -12,7 +12,7 @@ import tokn.encryption as encryption
 from tokn.encryption import KEYS_FILE
 import tokn.otp as otp
 from tokn.commands.write_commands import add, remove, change_password
-from tokn.commands.getters import get, list
+from tokn.commands.getters import get, list, vault
 from tokn.qr import read_qr_code
 
 @click.group(cls=ClickAliasedGroup)
@@ -20,6 +20,6 @@ from tokn.qr import read_qr_code
 def cli(ctx: click.core.Context):
     pass
 
-commands = [add, remove, get, list, change_password,]
+commands = [add, remove, get, list, change_password, vault,]
 for command in commands:
     cli.add_command(command)

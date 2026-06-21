@@ -7,6 +7,7 @@ import tokn.encryption as encryption
 from tokn.encryption import KEYS_FILE
 import tokn.otp as otp
 from tokn.util import require_password
+import os
 
 @click.command()
 @click.argument("issuer", required=True)
@@ -60,3 +61,9 @@ def list(ctx: click.core.Context):
 
             for label in entries[entry]:
                 click.echo(f" - {label}")
+
+@click.command()
+def vault():
+    """Retrieve information about the vault."""
+    
+    click.echo(f"Vault location: {KEYS_FILE}")
