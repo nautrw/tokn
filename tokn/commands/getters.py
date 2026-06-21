@@ -6,11 +6,11 @@ from cryptography.fernet import InvalidToken
 import tokn.encryption as encryption
 from tokn.encryption import KEYS_FILE
 import tokn.otp as otp
-
+from tokn.util import require_password
 
 @click.command()
 @click.argument("issuer", required=True)
-@click.pass_context
+@require_password
 def get(ctx: click.core.Context, issuer: str):
     """Retrieve TOTP codes of all accounts under issuer ISSUER.
 
@@ -38,7 +38,7 @@ def get(ctx: click.core.Context, issuer: str):
         click.echo(f"   Next code: {next_code}")
 
 @click.command()
-@click.pass_context
+@require_password
 def list(ctx: click.core.Context):
     """List all the accounts in the vault."""
     keys = ctx.obj["keys"]

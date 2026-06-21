@@ -1,3 +1,5 @@
+from numpy import require
+from tokn.util import require_password
 import json
 import click
 import pyotp
@@ -12,7 +14,7 @@ from tokn.qr import read_qr_code
 @click.command()
 @click.option("--code", is_flag=True)
 @click.option("--uri", is_flag=True)
-@click.pass_context
+@require_password
 def add(ctx: click.core.Context, code, uri):
     """Add a new account to the vault."""
     keys = ctx.obj["keys"]
@@ -88,7 +90,7 @@ def add(ctx: click.core.Context, code, uri):
 @click.command()
 @click.argument("issuer", required=True)
 @click.argument("name", required=True)
-@click.pass_context
+@require_password
 def remove(ctx: click.core.Context, issuer, label):
     """Remove an account NAME from the vault with issuer ISSUER."""
     keys = ctx.obj["keys"]
@@ -116,7 +118,7 @@ def remove(ctx: click.core.Context, issuer, label):
                'from your vault.')
 
 @click.command()
-@click.pass_context
+@require_password
 def change_password(ctx: click.core.Context):
     """Change the password of the vault."""
     current_password = ctx.obj["password"]
