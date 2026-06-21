@@ -37,6 +37,11 @@ def add(ctx: click.core.Context, code, uri):
             raise click.ClickException("Invalid URI.")
         
         issuer = parsed_uri.issuer
+
+        if not issuer:
+            click.echo("URI is missing an issuer. Please enter one.")
+            issuer = click.prompt("Issuer of key")
+        
         label = parsed_uri.name
         secret_key = parsed_uri.secret
     else:
@@ -56,6 +61,10 @@ def add(ctx: click.core.Context, code, uri):
             raise click.ClickException("Invalid QR code.")
     
         issuer = parsed_uri.issuer
+        if not issuer:
+            click.echo("QR code is missing an issuer. Please enter one.")
+            issuer = click.prompt("Issuer of key")
+            
         label = parsed_uri.name
         secret_key = parsed_uri.secret
     
