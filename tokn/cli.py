@@ -52,8 +52,6 @@ def cli(ctx):
             "keys": keys
         }
 
-cli.add_command(add)
-cli.add_command(remove)
-cli.add_command(get)
-cli.add_command(list)
-cli.add_command(change_password)
+commands = [add, remove, get, list, change_password,]
+for command in commands:
+    cli.add_command(command)
