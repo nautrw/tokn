@@ -12,8 +12,8 @@ from tokn.qr import read_qr_code
 
 
 @click.command()
-@click.option("--code", is_flag=True)
-@click.option("--uri", is_flag=True)
+@click.option("--code", is_flag=True, help="Enter the raw secret key code. Will ask for issuer and name.")
+@click.option("--uri", is_flag=True, help="Enter a raw OTP URI.")
 @require_password
 def add(ctx: click.core.Context, code, uri):
     """Add a new account to the vault."""
