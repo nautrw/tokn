@@ -13,7 +13,7 @@ from tokn.qr import read_qr_code
 @click.option("--code", is_flag=True)
 @click.option("--uri", is_flag=True)
 @click.pass_context
-def add(ctx, code, uri):
+def add(ctx: click.core.Context, code, uri):
     """Add a new account to the vault."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
@@ -89,7 +89,7 @@ def add(ctx, code, uri):
 @click.argument("issuer", required=True)
 @click.argument("name", required=True)
 @click.pass_context
-def remove(ctx, issuer, label):
+def remove(ctx: click.core.Context, issuer, label):
     """Remove an account NAME from the vault with issuer ISSUER."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
@@ -117,7 +117,7 @@ def remove(ctx, issuer, label):
 
 @click.command()
 @click.pass_context
-def change_password(ctx):
+def change_password(ctx: click.core.Context):
     """Change the password of the vault."""
     current_password = ctx.obj["password"]
 

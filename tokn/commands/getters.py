@@ -11,7 +11,7 @@ import tokn.otp as otp
 @click.command()
 @click.argument("issuer", required=True)
 @click.pass_context
-def get(ctx, issuer: str):
+def get(ctx: click.core.Context, issuer: str):
     """Retrieve TOTP codes of all accounts under issuer ISSUER.
 
     ISSUER is the name of the issuer.
@@ -39,7 +39,7 @@ def get(ctx, issuer: str):
 
 @click.command()
 @click.pass_context
-def list(ctx):
+def list(ctx: click.core.Context):
     """List all the accounts in the vault."""
     keys = ctx.obj["keys"]
 

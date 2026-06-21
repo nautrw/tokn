@@ -15,9 +15,9 @@ from tokn.commands.write_commands import add, remove, change_password
 from tokn.commands.getters import get, list
 from tokn.qr import read_qr_code
 
-@click.group(cls=ClickAliasedGroup)
+@click.group(cls=ClickAliasedGroup, invoke_without_command=True)
 @click.pass_context
-def cli(ctx):
+def cli(ctx: click.core.Context):
     if not os.path.isfile(KEYS_FILE):
         click.echo("New user detected. Starting setup.")
 
