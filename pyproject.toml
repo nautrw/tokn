@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 [project.scripts]
-tokn = "src.tokn_nautrw.cli:cli"
+tokn = "tokn.cli:cli"
 
 [project.urls]
 Homepage = "https://github.com/nautrw/tokn"
@@ -32,5 +32,5 @@ Issues = "https://github.com/nautrw/tokn/issues"
 CI = "https://github.com/nautrw/tokn/actions"
 
 [build-system]
-requires = ["hatchling >= 1.26"]
-build-backend = "hatchling.build"
+requires = ["setuptools >= 61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
