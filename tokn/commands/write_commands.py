@@ -99,30 +99,37 @@ def add(ctx: click.core.Context, code, uri):
 @click.argument("issuer", required=True)
 @click.argument("name", required=True)
 @require_password
-def remove(ctx: click.core.Context, issuer, label):
+def remove(ctx: click.core.Context, issuer, name):
     """Remove an account NAME from the vault with issuer ISSUER."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
 
-    issuers = set([entry["issuer"] for entry in keys])
-    if issuer not in issuers:
-        raise click.ClickException("That account is not in your vault.")
-
     for i, key in enumerate(keys):
-        if key["issuer"] == issuer and key["label"] == label:
-            del keys[i]
-
+        if key["issuer"] == issuer and key["label"] == name:
+            index = i
+            break
+    else:
+        raise click.ClickException(
+            "No account found with specified"
+            " issuer and name."
+        )
+    
     click.confirm(
         "Are you sure you want to delete this account from your vault?"
-        "This action can not be reversed.",
+        " This action can not be reversed.",
         abort=True,
     )
+    
+    del keys[index]
 
     salt = encryption.get_file_info(KEYS_FILE)[0]
-    key = encryption.gen_password_key(password, salt)
+    key = encryption.gen_password_key(password.encode(), salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
 
-    click.echo(f'Successfully removed account "{issuer}:{label}"' "from your vault.")
+    click.echo(
+        f'Successfully removed account "{name}" under issuer {issuer}'
+        " from your vault."
+    )
 
 
 @click.command()
