@@ -31,11 +31,20 @@ def get(ctx: click.core.Context, issuer: str):
         secret_key = account["secret"]
 
         totp = otp.generate_totp(secret_key)
-        time_remaining = otp.get_time_remaining(secret_key)
+        time_remaining = floor(otp.get_time_remaining(secret_key))
+        
+        if 0 <= time_remaining <= 10:
+            time_remaining_color = 'red'
+        elif 11 <= time_remaining <= 15:
+            time_remaining_color = 'yellow'
+        else:
+            time_remaining_color = 'green'
+        
         next_code = otp.get_next_totp(secret_key)
 
         click.echo(f"   Code: {totp}")
-        click.echo(f"   {floor(time_remaining)} seconds left")
+        click.echo(f"   {click.style(time_remaining, fg=time_remaining_color)}"
+                   " seconds left")
         click.echo(f"   Next code: {next_code}")
 
 @click.command()
