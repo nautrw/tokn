@@ -75,5 +75,4 @@ def list(ctx: click.core.Context):
 @click.command()
 def vault():
     """Retrieve information about the vault."""
-    
     click.echo(f"Vault location: {KEYS_FILE}")
