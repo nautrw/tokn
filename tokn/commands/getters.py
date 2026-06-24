@@ -35,17 +35,23 @@ def get(ctx: click.core.Context, issuer: str):
         
         if 0 <= time_remaining <= 10:
             time_remaining_color = 'red'
+            current_color = 'reset'
+            next_color = 'green'
         elif 11 <= time_remaining <= 15:
             time_remaining_color = 'yellow'
+            current_color = 'green'
+            next_color = 'reset'
         else:
             time_remaining_color = 'green'
+            current_color = 'green'
+            next_color = 'reset'
         
         next_code = otp.get_next_totp(secret_key)
 
-        click.echo(f"   Code: {totp}")
+        click.echo(f"   Code: {click.style(totp, fg=current_color)}"
+                   f" (Next: {click.style(next_code, fg=next_color)})")
         click.echo(f"   {click.style(time_remaining, fg=time_remaining_color)}"
                    " seconds left")
-        click.echo(f"   Next code: {next_code}")
 
 @click.command()
 @require_password
