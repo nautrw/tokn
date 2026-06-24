@@ -5,8 +5,7 @@ from tokn.qr import read_qr_code
 
 
 @click.group()
-@click.pass_context
-def cli(ctx: click.core.Context):
+def cli():
     pass
 
 
