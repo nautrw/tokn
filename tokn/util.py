@@ -45,3 +45,23 @@ def require_password(func):
         return ctx.invoke(func, ctx, *args, **kwargs)
     
     return update_wrapper(new_func, func)
+
+def codes_formatted(current, next, time_remaining):
+    if 0 <= time_remaining <= 10:
+        time_color = 'red'
+        current_color = 'reset'
+        next_color = 'green'
+    elif 11 <= time_remaining <= 15:
+        time_color = 'yellow'
+        current_color = 'green'
+        next_color = 'reset'
+    else:
+        time_color = 'green'
+        current_color = 'green'
+        next_color = 'reset'
+    
+    current_formatted = click.style(current, fg=current_color)
+    next_formatted = click.style(next, fg=next_color)
+    time_formatted = click.style(f"{time_remaining}s", fg=time_color)
+    
+    return current_formatted, next_formatted, time_formatted

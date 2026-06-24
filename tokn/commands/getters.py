@@ -6,7 +6,7 @@ from cryptography.fernet import InvalidToken
 import tokn.encryption as encryption
 from tokn.encryption import KEYS_FILE
 import tokn.otp as otp
-from tokn.util import require_password
+from tokn.util import require_password, codes_formatted
 import os
 
 @click.command()
@@ -32,26 +32,13 @@ def get(ctx: click.core.Context, issuer: str):
 
         totp = otp.generate_totp(secret_key)
         time_remaining = floor(otp.get_time_remaining(secret_key))
-        
-        if 0 <= time_remaining <= 10:
-            time_remaining_color = 'red'
-            current_color = 'reset'
-            next_color = 'green'
-        elif 11 <= time_remaining <= 15:
-            time_remaining_color = 'yellow'
-            current_color = 'green'
-            next_color = 'reset'
-        else:
-            time_remaining_color = 'green'
-            current_color = 'green'
-            next_color = 'reset'
-        
         next_code = otp.get_next_totp(secret_key)
 
-        click.echo(f"   Code: {click.style(totp, fg=current_color)}"
-                   f" (Next: {click.style(next_code, fg=next_color)})")
-        click.echo(f"   {click.style(time_remaining, fg=time_remaining_color)}"
-                   " seconds left")
+        current_formatted, next_formatted, time_formatted = codes_formatted(totp, next_code, time_remaining)
+
+        click.echo(f"Code: {current_formatted} "
+                   f"(Expires in {time_formatted})")
+        click.echo(f"Upcoming: {next_formatted}")
 
 @click.command()
 @require_password
