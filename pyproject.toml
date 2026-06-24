@@ -1,7 +1,10 @@
 [project]
-name = "tokn"
-description = "CLI tool to store TOTP secret keys and generate codes"
+name = "tokn_nautrw"
 version = "0.1.0"
+authors = [
+    { name = "nautrw", email="nautrw@proton.me" }
+]
+description = "CLI tool to store TOTP secret keys and generate codes"
 dependencies = [
     "click==8.3.3",
     "pyotp==2.9.0",
@@ -14,11 +17,20 @@ dependencies = [
 requires-python = ">= 3.6"
 license = "MIT"
 readme = { file = "README.md", content-type = "text/markdown" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
 
 [project.scripts]
-tokn = "tokn.cli:cli"
+tokn = "src.tokn_nautrw.cli:cli"
 
 [project.urls]
 Homepage = "https://github.com/nautrw/tokn"
+Repository = "https://github.com/nautrw/tokn.git"
 Issues = "https://github.com/nautrw/tokn/issues"
 CI = "https://github.com/nautrw/tokn/actions"
+
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
