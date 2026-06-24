@@ -52,7 +52,7 @@ def add(ctx: click.core.Context, code, uri):
         qr_path = click.prompt("QR code image path")
 
         try:
-            expanded_path = os.path.expanduser(qr_path)
+            expanded_path = os.path.expanduser(qr_path.strip('"'))
             code = read_qr_code(expanded_path)
         except ValueError:
             raise click.ClickException(
