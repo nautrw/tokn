@@ -1,5 +1,6 @@
 # tokn
 Tokn is a CLI-based TOTP (time-based one-time password) code generator that uses encryption to store secret keys.
+[![asciicast](https://asciinema.org/a/GkWW4UOBH3z1jX7P.svg)](https://asciinema.org/a/GkWW4UOBH3z1jX7P)
 ## Quick Start/Installation
 ### From GitHub
 1. Clone the GitHub repository or download the code (using the green button)
@@ -8,9 +9,10 @@ Tokn is a CLI-based TOTP (time-based one-time password) code generator that uses
 pip install -e .
 ```
 ## Features
-- Argon2 encryption of secret keys
-- No secret keys or passwords are exposed to log files and such
-- Adding keys via QR code images
+- An encrypted vault file used to store keys
+- Secret keys and passwords are never exposed
+- Accounts can be added via QR code screenshots, raw codes, or URIs
+- CLI is designed to be as ergonomic as possible
 ## Advanced
 - The vault is stored in their best location depending on the operating system:
 
