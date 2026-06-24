@@ -55,21 +55,22 @@ def list(ctx: click.core.Context):
 
     if not keys:
         click.echo("No accounts found in vault.")
-    else:
-        # no, defaultdict will not work and I don't know why
-        entries = {}
+        return
+    
+    # no, defaultdict will not work and I don't know why
+    entries = {}
 
-        for key in keys:
-            if key["issuer"] not in entries.keys():
-                entries[key["issuer"]] = []
+    for key in keys:
+        if key["issuer"] not in entries.keys():
+            entries[key["issuer"]] = []
 
-            entries[key["issuer"]].append(key["label"])
+        entries[key["issuer"]].append(key["label"])
 
-        for entry in entries:
-            click.echo(entry)
+    for entry in entries:
+        click.echo(entry)
 
-            for label in entries[entry]:
-                click.echo(f" - {label}")
+        for label in entries[entry]:
+            click.echo(f" - {label}")
 
 @click.command()
 def vault():
