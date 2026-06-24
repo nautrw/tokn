@@ -9,9 +9,11 @@ from platformdirs import PlatformDirs
 dirs = PlatformDirs("tokn", "nautrw", ensure_exists=True)
 KEYS_FILE = dirs.user_data_dir + "/keys"
 
+
 def gen_password_key(password: bytes, salt: bytes) -> bytes:
+    # 2**21 = 2.09 gb
     kdf = Argon2id(
-        salt=salt, length=32, iterations=1, lanes=4, memory_cost=2**21  # 2.09 gb
+        salt=salt, length=32, iterations=1, lanes=4, memory_cost=2**21
     )
 
     key = kdf.derive(password)

@@ -9,6 +9,7 @@ import tokn.otp as otp
 from tokn.util import require_password, codes_formatted
 import os
 
+
 @click.command()
 @click.argument("issuer", required=True)
 @require_password
@@ -34,11 +35,13 @@ def get(ctx: click.core.Context, issuer: str):
         time_remaining = floor(otp.get_time_remaining(secret_key))
         next_code = otp.get_next_totp(secret_key)
 
-        current_formatted, next_formatted, time_formatted = codes_formatted(totp, next_code, time_remaining)
+        current_formatted, next_formatted, time_formatted = codes_formatted(
+            totp, next_code, time_remaining
+        )
 
-        click.echo(f"Code: {current_formatted} "
-                   f"(Expires in {time_formatted})")
+        click.echo(f"Code: {current_formatted} (Expires in {time_formatted})")
         click.echo(f"Upcoming: {next_formatted}")
+
 
 @click.command()
 @require_password
@@ -49,7 +52,7 @@ def list(ctx: click.core.Context):
     if not keys:
         click.echo("No accounts found in vault.")
         return
-    
+
     # no, defaultdict will not work and I don't know why
     entries = {}
 
@@ -64,6 +67,7 @@ def list(ctx: click.core.Context):
 
         for label in entries[entry]:
             click.echo(f" - {label}")
+
 
 @click.command()
 def vault():

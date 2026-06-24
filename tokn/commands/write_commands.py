@@ -12,41 +12,45 @@ from tokn.qr import read_qr_code
 
 
 @click.command()
-@click.option("--code", is_flag=True, help="Enter the raw secret key code. Will ask for issuer and name.")
+@click.option(
+    "--code",
+    is_flag=True,
+    help="Enter the raw secret key code. Will ask for issuer and name.",
+)
 @click.option("--uri", is_flag=True, help="Enter a raw OTP URI.")
 @require_password
 def add(ctx: click.core.Context, code, uri):
     """Add a new account to the vault."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
-    
+
     if code:
         issuer = click.prompt("Issuer of key")
         label = click.prompt("Account name")
         secret_key = click.prompt("Secret key", hide_input=True)
-        
+
         clean_secret = secret_key.replace(" ", "").upper()
         if not otp.is_valid_secret(clean_secret):
             raise click.ClickException("Invalid secret key.")
     elif uri:
         uri = click.prompt("URI", hide_input=True)
-        
+
         try:
             parsed_uri = pyotp.parse_uri(uri)
         except ValueError:
             raise click.ClickException("Invalid URI.")
-        
+
         issuer = parsed_uri.issuer
 
         if not issuer:
             click.echo("URI is missing an issuer. Please enter one.")
             issuer = click.prompt("Issuer of key")
-        
+
         label = parsed_uri.name
         secret_key = parsed_uri.secret
     else:
         qr_path = click.prompt("QR code image path")
-        
+
         try:
             code = read_qr_code(qr_path)
         except ValueError:
@@ -54,30 +58,26 @@ def add(ctx: click.core.Context, code, uri):
                 "Could not extract QR code from image. "
                 "Please ensure the image is valid."
             )
-        
+
         try:
             parsed_uri = pyotp.parse_uri(code)
         except ValueError:
             raise click.ClickException("Invalid QR code.")
-    
+
         issuer = parsed_uri.issuer
         if not issuer:
             click.echo("QR code is missing an issuer. Please enter one.")
             issuer = click.prompt("Issuer of key")
-            
+
         label = parsed_uri.name
         secret_key = parsed_uri.secret
-    
+
     click.echo(f"Issuer: {issuer}")
     click.echo(f"Label: {label}")
 
     click.confirm("Are you sure you want to add this account?", abort=True)
 
-    new_key_obj = {
-        "issuer": issuer,
-        "label": label,
-        "secret": secret_key
-    }
+    new_key_obj = {"issuer": issuer, "label": label, "secret": secret_key}
 
     for i, key in enumerate(keys):
         if key["issuer"] == issuer and key["label"] == label:
@@ -91,9 +91,10 @@ def add(ctx: click.core.Context, code, uri):
     salt = encryption.get_file_info(KEYS_FILE)[0]
     key = encryption.gen_password_key(password.encode(), salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
-    
+
     click.echo(f'Successfully added key under issuer "{issuer}".')
-    
+
+
 @click.command()
 @click.argument("issuer", required=True)
 @click.argument("name", required=True)
@@ -102,7 +103,7 @@ def remove(ctx: click.core.Context, issuer, label):
     """Remove an account NAME from the vault with issuer ISSUER."""
     keys = ctx.obj["keys"]
     password = ctx.obj["password"]
-    
+
     issuers = set([entry["issuer"] for entry in keys])
     if issuer not in issuers:
         raise click.ClickException("That account is not in your vault.")
@@ -121,8 +122,8 @@ def remove(ctx: click.core.Context, issuer, label):
     key = encryption.gen_password_key(password, salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
 
-    click.echo(f'Successfully removed account "{issuer}:{label}"'
-               'from your vault.')
+    click.echo(f'Successfully removed account "{issuer}:{label}"' "from your vault.")
+
 
 @click.command()
 @require_password
