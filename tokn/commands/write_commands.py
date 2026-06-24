@@ -82,7 +82,7 @@ def add(ctx: click.core.Context, code, uri):
 
     for i, key in enumerate(keys):
         if key["issuer"] == issuer and key["label"] == label:
-            click.confirm("This key already exists. Override?", abort=True)
+            click.confirm("This account already exists. Override?", abort=True)
 
             keys[i] = new_key_obj
             break
@@ -93,7 +93,7 @@ def add(ctx: click.core.Context, code, uri):
     key = encryption.gen_password_key(password.encode(), salt)
     encryption.encrypt_to_file(KEYS_FILE, json.dumps(keys), salt, key)
 
-    click.echo(f'Successfully added key under issuer "{issuer}".')
+    click.echo(f'Successfully added account under issuer "{issuer}".')
 
 
 @click.command()
